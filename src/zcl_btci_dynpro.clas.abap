@@ -1,65 +1,78 @@
-class ZCL_BTCI_DYNPRO definition
-  public
-  create public
+CLASS zcl_btci_dynpro DEFINITION
+  PUBLIC
+  CREATE PUBLIC
 
-  global friends ZCL_BTCI_SELSCR .
+  GLOBAL FRIENDS zcl_btci_selscr .
 
-public section.
+  PUBLIC SECTION.
 
-  data PROGRAM type SYREPID read-only .
-  data DYNPRO type SYDYNNR read-only .
-  data AUT_BDCDATA type WDKBDCDATA_TTY .
+    DATA program TYPE syrepid READ-ONLY .
+    DATA dynpro TYPE sydynnr READ-ONLY .
+    DATA aut_bdcdata TYPE wdkbdcdata_tty .
 
-  methods CONSTRUCTOR
-    importing
-      !IV_PROGRAM type SYREPID
-      !IV_DYNPRO type SYDYNNR .
-  methods SET_FIELD
-    importing
-      !NAME type C optional
-      !VALUE type SIMPLE optional
-    preferred parameter VALUE
-    returning
-      value(FLUENT_DYNPRO) type ref to ZCL_BTCI_DYNPRO .
-  methods APPEND_STEPLOOP_FIELD
-    importing
-      !NAME type C optional
-      !IV_STEPL type NUMERIC
-      !VALUE type SIMPLE
-    returning
-      value(FLUENT_DYNPRO) type ref to ZCL_BTCI_DYNPRO .
-  methods SET_CURSOR
-    importing
-      !NAME type C
-    returning
-      value(FLUENT_DYNPRO) type ref to ZCL_BTCI_DYNPRO .
-  methods SET_OKCODE
-    importing
-      !IV_OKCODE type SYUCOMM
-    returning
-      value(FLUENT_DYNPRO) type ref to ZCL_BTCI_DYNPRO .
-protected section.
-private section.
+    METHODS constructor
+      IMPORTING
+        !iv_program TYPE syrepid
+        !iv_dynpro  TYPE sydynnr .
+    METHODS set_field
+      IMPORTING
+        !name                TYPE c OPTIONAL
+        !value               TYPE simple OPTIONAL
+          PREFERRED PARAMETER value
+      RETURNING
+        VALUE(fluent_dynpro) TYPE REF TO zcl_btci_dynpro .
+    METHODS append_steploop_field
+      IMPORTING
+        !name                TYPE c OPTIONAL
+        !iv_stepl            TYPE numeric
+        !value               TYPE simple
+      RETURNING
+        VALUE(fluent_dynpro) TYPE REF TO zcl_btci_dynpro .
+    METHODS set_cursor
+      IMPORTING
+        !name                TYPE c
+        !steploop_row        TYPE i OPTIONAL
+      RETURNING
+        VALUE(fluent_dynpro) TYPE REF TO zcl_btci_dynpro .
+    METHODS set_cursor_dobj
+      IMPORTING
+        !dobj               TYPE any
+        !steploop_row        TYPE i OPTIONAL
+      RETURNING
+        VALUE(fluent_dynpro) TYPE REF TO zcl_btci_dynpro .
+    METHODS set_cursor_list
+      IMPORTING
+        !row                 TYPE i
+        !column              TYPE i
+      RETURNING
+        VALUE(fluent_dynpro) TYPE REF TO zcl_btci_dynpro .
+    METHODS set_okcode
+      IMPORTING
+        !iv_okcode           TYPE syucomm
+      RETURNING
+        VALUE(fluent_dynpro) TYPE REF TO zcl_btci_dynpro .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 
-  constants C_B_DC_OKCODE type BDCDATA-FNAM value 'BDC_OKCODE' ##NO_TEXT.
-  constants C_B_DC_CURSOR type BDCDATA-FNAM value 'BDC_CURSOR' ##NO_TEXT.
+    CONSTANTS c_b_dc_okcode TYPE bdcdata-fnam VALUE 'BDC_OKCODE' ##NO_TEXT.
+    CONSTANTS c_b_dc_cursor TYPE bdcdata-fnam VALUE 'BDC_CURSOR' ##NO_TEXT.
 
-  methods DEDUCE_FIELD_NAME
-    importing
-      !VALUE type SIMPLE
-    returning
-      value(EV_FIELD_NAME) type D021S-FNAM .
-  class-methods CREATE_DUMMY_EMPTY_DYNPRO
-    returning
-      value(DYNPRO) type ref to ZCL_BTCI_DYNPRO .
+    METHODS deduce_field_name
+      IMPORTING
+        !value               TYPE simple
+      RETURNING
+        VALUE(ev_field_name) TYPE d021s-fnam .
+    CLASS-METHODS create_dummy_empty_dynpro
+      RETURNING
+        VALUE(dynpro) TYPE REF TO zcl_btci_dynpro .
 ENDCLASS.
 
 
 
-CLASS ZCL_BTCI_DYNPRO IMPLEMENTATION.
+CLASS zcl_btci_dynpro IMPLEMENTATION.
 
 
-  method APPEND_STEPLOOP_FIELD.
+  METHOD append_steploop_field.
 
     DATA: ls_bdcdata TYPE bdcdata,
           l_stepl(2) TYPE n.
@@ -77,10 +90,10 @@ CLASS ZCL_BTCI_DYNPRO IMPLEMENTATION.
 
     fluent_dynpro = me.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method CONSTRUCTOR.
+  METHOD constructor.
 
     DATA ls_bdcdata TYPE bdcdata.
 
@@ -93,39 +106,64 @@ CLASS ZCL_BTCI_DYNPRO IMPLEMENTATION.
     ls_bdcdata-dynpro  = iv_dynpro.
     APPEND ls_bdcdata TO aut_bdcdata.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method CREATE_DUMMY_EMPTY_DYNPRO.
+  METHOD create_dummy_empty_dynpro.
 
     dynpro = NEW zcl_btci_dynpro( iv_program = space iv_dynpro = space ).
     CLEAR dynpro->aut_bdcdata.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method DEDUCE_FIELD_NAME.
+  METHOD deduce_field_name.
 
     DESCRIBE FIELD value HELP-ID ev_field_name.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method SET_CURSOR.
-
+  METHOD set_cursor.
 
     DATA ls_bdcdata TYPE bdcdata.
 
     ls_bdcdata-fnam = c_b_dc_cursor.
-    ls_bdcdata-fval = name.
+    IF steploop_row = 0.
+      ls_bdcdata-fval = name.
+    ELSE.
+      ls_bdcdata-fval = |{ name }({ steploop_row })|.
+    ENDIF.
     APPEND ls_bdcdata TO aut_bdcdata.
 
     fluent_dynpro = me.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method SET_FIELD.
+  METHOD set_cursor_dobj.
+
+    set_cursor( name = deduce_field_name( dobj ) steploop_row = steploop_row ).
+
+    fluent_dynpro = me.
+
+  ENDMETHOD.
+
+
+  METHOD set_cursor_list.
+
+    DATA ls_bdcdata TYPE bdcdata.
+
+    ls_bdcdata-fnam = c_b_dc_cursor.
+    ls_bdcdata-fval = |{ row }/{ column }|.
+    APPEND ls_bdcdata TO aut_bdcdata.
+
+    fluent_dynpro = me.
+
+  ENDMETHOD.
+
+
+  METHOD set_field.
 
     DATA ls_bdcdata TYPE bdcdata.
 
@@ -139,10 +177,10 @@ CLASS ZCL_BTCI_DYNPRO IMPLEMENTATION.
 
     fluent_dynpro = me.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method SET_OKCODE.
+  METHOD set_okcode.
 
 
     DATA ls_bdcdata TYPE bdcdata.
@@ -153,5 +191,5 @@ CLASS ZCL_BTCI_DYNPRO IMPLEMENTATION.
 
     fluent_dynpro = me.
 
-  endmethod.
+  ENDMETHOD.
 ENDCLASS.

@@ -1,7 +1,7 @@
 CLASS zcl_btci DEFINITION
   PUBLIC
   FINAL
-  CREATE PRIVATE .
+  CREATE PRIVATE.
 
   PUBLIC SECTION.
 
@@ -124,7 +124,15 @@ ENDCLASS.
 
 
 
-CLASS zcl_btci IMPLEMENTATION.
+CLASS ZCL_BTCI IMPLEMENTATION.
+
+
+  METHOD create.
+    IF singleton IS NOT BOUND.
+      CREATE OBJECT singleton.
+    ENDIF.
+    btci = singleton.
+  ENDMETHOD.
 
 
   METHOD get_dynpro.
@@ -144,12 +152,4 @@ CLASS zcl_btci IMPLEMENTATION.
         iv_tcode = iv_tcode.
 
   ENDMETHOD.
-
-  METHOD create.
-    IF singleton IS NOT BOUND.
-      CREATE OBJECT singleton.
-    ENDIF.
-    btci = singleton.
-  ENDMETHOD.
-
 ENDCLASS.
