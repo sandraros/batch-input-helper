@@ -5,11 +5,11 @@
 *&---------------------------------------------------------------------*
 REPORT zbtci_demo_fi02.
 
-zcl_btci=>create( )->get_transaction( 'FI02'
+zcl_btci_factory=>create( )->get_transaction( 'FI02'
     )->add_dynpro( NEW zcl_btci_dynpro( iv_program = 'SAPMF02B' iv_dynpro = '0100'
                       )->set_field( CONV bnka-banks( 'FR' ) " country
                       )->set_field( CONV bnka-bankl( '1234567890' ) " bank ID
-                      )->set_okcode( zcl_btci=>c_fkey-enter )
+                      )->set_okcode( zcl_btci_constants=>c_fkey-enter )
     )->add_dynpro( NEW zcl_btci_dynpro( iv_program = 'SAPMF02B' iv_dynpro = '0110'
                       )->set_field( CONV bnka-banka( 'ZZ' ) " bank name
                       )->set_okcode( '=ADDR' )

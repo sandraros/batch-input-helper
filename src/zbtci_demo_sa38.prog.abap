@@ -22,7 +22,7 @@ START-OF-SELECTION.
           )->execute_function( 'ONLI'
 
           )->set_selection_screen( '1000'
-          )->execute_function( zcl_btci=>c_fkey-f3 " BACK
+          )->execute_function( zcl_btci_constants=>c_fkey-f3 " BACK
 
           )->finalize( )->call_transaction(
             EXPORTING

@@ -48,7 +48,7 @@ CLASS zcl_btci_submit_via_sa38 IMPLEMENTATION.
   METHOD constructor.
 
     me->program = program.
-    transaction = zcl_btci=>create( )->get_transaction( iv_tcode = 'SA38'
+    transaction = zcl_btci_factory=>create( )->get_transaction( iv_tcode = 'SA38'
                             )->add_dynpro( NEW zcl_btci_dynpro( iv_program = 'SAPMS38M' iv_dynpro  = '0101'
                                       )->set_field( CONV rs38m-programm( program ) ##OPERATOR
                                       )->set_okcode( 'STRT' ) ).
@@ -67,7 +67,7 @@ CLASS zcl_btci_submit_via_sa38 IMPLEMENTATION.
 
   METHOD finalize.
 
-    me->transaction->add_dynpro( NEW zcl_btci_dynpro( iv_program = 'SAPMS38M' iv_dynpro  = '0101' )->set_okcode( zcl_btci=>c_fkey-f3 ) ).
+    me->transaction->add_dynpro( NEW zcl_btci_dynpro( iv_program = 'SAPMS38M' iv_dynpro  = '0101' )->set_okcode( zcl_btci_constants=>c_fkey-f3 ) ).
     transaction = me->transaction.
 
   ENDMETHOD.

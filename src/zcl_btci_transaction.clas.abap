@@ -3,12 +3,14 @@ CLASS zcl_btci_transaction DEFINITION
   FINAL
   CREATE PRIVATE
 
-  GLOBAL FRIENDS zcl_btci .
+  GLOBAL FRIENDS zcl_btci_factory.
 
   PUBLIC SECTION.
+    INTERFACES: zif_btci_transaction.
+  TYPES td_display_mode TYPE char01 .
+  TYPES td_update_mode TYPE char01 .
 
-    TYPES td_display_mode TYPE char01 .
-    TYPES td_update_mode TYPE char01 .
+
     TYPES:
       ty_dynpros TYPE STANDARD TABLE OF REF TO zcl_btci_dynpro WITH DEFAULT KEY .
 
