@@ -24,3 +24,5 @@ This code is to change a few fields of an existing bank, using FI02 transaction 
                         iv_display = zcl_btci_transaction=>c_display-all_screens
                       RECEIVING
                         eo_result  = DATA(lo_result) ).
+
+based on the batch-input-helper created by sandraros https://github.com/sandraros/batch-input-helper
