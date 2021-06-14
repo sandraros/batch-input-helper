@@ -13,7 +13,7 @@ START-OF-SELECTION.
 
   IF p_carrid IS INITIAL.
 
-    NEW zcl_btci_submit_via_sa38( program = 'ZZSRO_TEST6'
+    zcl_btci_factory=>create( )->get_submit_via_sa38( program = 'ZZSRO_TEST6' ##TODo "this program doesn't exist...
 
           )->set_selection_screen( '1000'
           )->set_parameters( name = 'P_CARRID' value = 'X'
@@ -22,16 +22,17 @@ START-OF-SELECTION.
           )->execute_function( 'ONLI'
 
           )->set_selection_screen( '1000'
-          )->execute_function( zcl_btci=>c_fkey-f3 " BACK
+          )->execute_function( zcl_btci_constants=>c_fkey-f3 " BACK
 
           )->finalize( )->call_transaction(
             EXPORTING
-              iv_display = zcl_btci_transaction=>c_display-all_screens
+              bdc_display_mode = zif_btci_transaction=>c_display-all_screens
             RECEIVING
-              eo_result  = DATA(lo_result)
+              r_result  = DATA(go_result)
           ).
 
-    BREAK-POINT.
+    DATA(g_messages) = go_result->get_messages_bapiret2( ).
+    cl_demo_output=>display( g_messages ).
 
   ELSE.
 

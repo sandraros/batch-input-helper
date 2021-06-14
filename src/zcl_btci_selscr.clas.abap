@@ -7,12 +7,12 @@ public section.
 
   class-methods ADD_SELECT_OPTIONS
     importing
-      !IV_PROGRAM type SYREPID
+      !program type SYREPID
       !DYNNR type SYDYNNR
       !NAME type CSEQUENCE
       !VALUE type STANDARD TABLE
     returning
-      value(DYNPROS) type ZCL_BTCI_TRANSACTION=>TY_DYNPROS .
+      value(DYNPROS) type zif_btci_transaction=>TY_DYNPROS .
 protected section.
 private section.
 ENDCLASS.
@@ -55,7 +55,7 @@ CLASS ZCL_BTCI_SELSCR IMPLEMENTATION.
       <l_high>   TYPE clike,
       <ls_tab>   TYPE ty_ls_tab.
 
-    ls_id-repid = iv_program.
+    ls_id-repid = program.
     ls_id-dynnr = dynnr.
     IMPORT DYNPRO ls_d020s lt_d021s lt_d022s lt_d023s ID ls_id.
     IF sy-subrc <> 0.
@@ -81,11 +81,11 @@ CLASS ZCL_BTCI_SELSCR IMPLEMENTATION.
     "------------------------------------------
     " empty the list of values inside the select options
     "------------------------------------------
-    dynpro2 = NEW zcl_btci_dynpro( iv_program = 'SAPLALDB' iv_dynpro = '3000' ).
+    dynpro2 = NEW zcl_btci_dynpro( program = 'SAPLALDB' dynpro = '3000' ).
     dynpro2->set_okcode( '/EDELA' ).
     APPEND dynpro2 TO dynpros.
 
-    dynpro2 = NEW zcl_btci_dynpro( iv_program = 'SAPLALDB' iv_dynpro = '3000' ).
+    dynpro2 = NEW zcl_btci_dynpro( program = 'SAPLALDB' dynpro = '3000' ).
 
     "------------------------------------------
     " Now fill values from the range
@@ -124,7 +124,7 @@ CLASS ZCL_BTCI_SELSCR IMPLEMENTATION.
             APPEND dynpro2 TO dynpros.
 
             " now, prepare start of next screen
-            dynpro2 = NEW zcl_btci_dynpro( iv_program = 'SAPLALDB' iv_dynpro = '3000' ).
+            dynpro2 = NEW zcl_btci_dynpro( program = 'SAPLALDB' dynpro = '3000' ).
           ENDIF.
           l_row_number = 1.
           CLEAR l_first_time.
@@ -135,7 +135,7 @@ CLASS ZCL_BTCI_SELSCR IMPLEMENTATION.
           dynpro2->set_cursor( l_fnam )->set_okcode( 'P+' ).
           APPEND dynpro2 TO dynpros.
 
-          dynpro2 = NEW zcl_btci_dynpro( iv_program = 'SAPLALDB' iv_dynpro = '3000' ).
+          dynpro2 = NEW zcl_btci_dynpro( program = 'SAPLALDB' dynpro = '3000' ).
 
           " page down will scroll 7 lines only (last line of last page becomes the first line)
           " so fill from second line

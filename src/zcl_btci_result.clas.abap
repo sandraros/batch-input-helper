@@ -3,26 +3,22 @@ class ZCL_BTCI_RESULT definition
   final
   create private
 
-  global friends ZCL_BTCI_TRANSACTION .
+  global friends zif_btci_transaction .
 
 public section.
+  INTERFACES: Zif_BTCI_RESULT.
+  ALIASES:
+    bdc_messages FOR Zif_BTCI_RESULT~bdc_messages,
+    has_error FOR Zif_BTCI_RESULT~has_error,
+    subrc FOR Zif_BTCI_RESULT~subrc.
 
-  data AUT_BDCMSGCOLL type ETTCD_MSG_TABTYPE read-only .
-  data AU_SUBRC type SYSUBRC read-only .
-  data HAS_ERROR type ABAP_BOOL read-only .
-
-  methods SET_ERROR_IF_CONTAINS_SY_MSG .
-  methods DELETE_USELESS_SY_MSG .
-  methods GET_MESSAGES_BAPIRET2
-    exporting
-      !ET_BAPIRET2 type BAPIRET2_T .
 protected section.
 private section.
 
   methods CONSTRUCTOR
     importing
-      value(IV_SUBRC) type SYSUBRC
-      !IT_BDCMSGCOLL type ETTCD_MSG_TABTYPE .
+      value(subrc) type SYSUBRC
+      !bdc_messages type ETTCD_MSG_TABTYPE .
 ENDCLASS.
 
 
@@ -32,12 +28,12 @@ CLASS ZCL_BTCI_RESULT IMPLEMENTATION.
 
   method CONSTRUCTOR.
 
-    au_subrc = iv_subrc.
-    aut_bdcmsgcoll = it_bdcmsgcoll.
-    IF au_subrc <> 0.
+    me->subrc = subrc.
+    me->bdc_messages = bdc_messages.
+    IF subrc <> 0.
       has_error = abap_true.
     ELSE.
-      LOOP AT aut_bdcmsgcoll TRANSPORTING NO FIELDS
+      LOOP AT bdc_messages TRANSPORTING NO FIELDS
             WHERE msgtyp CA sctsa_msg_types_nok .
         has_error = abap_true.
         EXIT.
@@ -47,9 +43,9 @@ CLASS ZCL_BTCI_RESULT IMPLEMENTATION.
   endmethod.
 
 
-  method DELETE_USELESS_SY_MSG.
+  method Zif_BTCI_RESULT~DELETE_USELESS_SY_MSG.
 
-    DELETE aut_bdcmsgcoll
+    DELETE bdc_messages
           WHERE msgtyp = sy-msgty
             AND msgid  = sy-msgid
             AND msgnr  = sy-msgno.
@@ -57,16 +53,15 @@ CLASS ZCL_BTCI_RESULT IMPLEMENTATION.
   endmethod.
 
 
-  method GET_MESSAGES_BAPIRET2.
+  method Zif_BTCI_RESULT~GET_MESSAGES_BAPIRET2.
 
     DATA l_message TYPE string.
 
-    REFRESH et_bapiret2.
-    LOOP AT me->aut_bdcmsgcoll ASSIGNING FIELD-SYMBOL(<lfs_bdcmsgcoll>).
+    LOOP AT me->bdc_messages ASSIGNING FIELD-SYMBOL(<lfs_bdcmsgcoll>).
       MESSAGE ID <lfs_bdcmsgcoll>-msgid TYPE <lfs_bdcmsgcoll>-msgtyp NUMBER <lfs_bdcmsgcoll>-msgnr
             WITH <lfs_bdcmsgcoll>-msgv1 <lfs_bdcmsgcoll>-msgv2 <lfs_bdcmsgcoll>-msgv3 <lfs_bdcmsgcoll>-msgv4
             INTO l_message.
-      et_bapiret2 = VALUE #( BASE et_bapiret2
+      r_messages = VALUE #( BASE r_messages
                       ( type       = <lfs_bdcmsgcoll>-msgtyp
                         id         = <lfs_bdcmsgcoll>-msgid
                         number     = <lfs_bdcmsgcoll>-msgnr
@@ -82,9 +77,9 @@ CLASS ZCL_BTCI_RESULT IMPLEMENTATION.
   endmethod.
 
 
-  method SET_ERROR_IF_CONTAINS_SY_MSG.
+  method Zif_BTCI_RESULT~SET_ERROR_IF_CONTAINS_SY_MSG.
 
-    READ TABLE aut_bdcmsgcoll ASSIGNING FIELD-SYMBOL(<lfs_bdcmsgcoll>)
+    READ TABLE bdc_messages ASSIGNING FIELD-SYMBOL(<lfs_bdcmsgcoll>)
           WITH KEY
             msgtyp = sy-msgty
             msgid  = sy-msgid
