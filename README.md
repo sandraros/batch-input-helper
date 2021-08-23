@@ -21,7 +21,7 @@ This code is to change a few fields of an existing bank, using FI02 transaction 
                       )->set_okcode( '=UPDA' )
      )->call_transaction(
                       EXPORTING
-                        bdc_display_mode = zcl_btci_transaction=>c_display-all_screens
+                        bdc_display_mode = zif_btci_transaction=>c_display-all_screens
                       RECEIVING
                         r_result  = DATA(lo_result) ).
 
