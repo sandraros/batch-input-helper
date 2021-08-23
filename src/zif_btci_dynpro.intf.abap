@@ -8,6 +8,7 @@ interface ZIF_BTCI_DYNPRO
       IMPORTING
         !name                TYPE c OPTIONAL
         !value               TYPE simple OPTIONAL
+        !format_field_automatically TYPE abap_bool DEFAULT abap_true
           PREFERRED PARAMETER value
       RETURNING
         VALUE(fluent_dynpro) TYPE REF TO zif_btci_dynpro .
