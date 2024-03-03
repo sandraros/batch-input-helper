@@ -1,24 +1,9 @@
-CLASS zcl_btci DEFINITION
+CLASS zcl_btci_constants DEFINITION
   PUBLIC
   FINAL
   CREATE PRIVATE.
 
   PUBLIC SECTION.
-
-    CLASS-METHODS create
-      RETURNING
-        VALUE(btci) TYPE REF TO zcl_btci .
-    METHODS get_dynpro
-      IMPORTING
-        !iv_program      TYPE syrepid
-        !iv_dynpro       TYPE sydynnr
-      RETURNING
-        VALUE(eo_dynpro) TYPE REF TO zcl_btci_dynpro .
-    METHODS get_transaction
-      IMPORTING
-        !iv_tcode             TYPE tcode
-      RETURNING
-        VALUE(eo_transaction) TYPE REF TO zcl_btci_transaction .
 
     CONSTANTS:
       BEGIN OF c_fkey, " list in table GUI_FKEY
@@ -119,37 +104,10 @@ CLASS zcl_btci DEFINITION
 
   PROTECTED SECTION.
   PRIVATE SECTION.
-    CLASS-DATA singleton TYPE REF TO zcl_btci .
 ENDCLASS.
 
 
 
-CLASS ZCL_BTCI IMPLEMENTATION.
+CLASS ZCL_BTCI_CONSTANTS IMPLEMENTATION.
 
-
-  METHOD create.
-    IF singleton IS NOT BOUND.
-      CREATE OBJECT singleton.
-    ENDIF.
-    btci = singleton.
-  ENDMETHOD.
-
-
-  METHOD get_dynpro.
-
-    CREATE OBJECT eo_dynpro
-      EXPORTING
-        iv_program = iv_program
-        iv_dynpro  = iv_dynpro.
-
-  ENDMETHOD.
-
-
-  METHOD get_transaction.
-
-    CREATE OBJECT eo_transaction
-      EXPORTING
-        iv_tcode = iv_tcode.
-
-  ENDMETHOD.
 ENDCLASS.
